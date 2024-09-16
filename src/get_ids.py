@@ -3,6 +3,8 @@
 import os
 import random
 from itertools import permutations
+import random
+from datetime import datetime, timedelta
 
 
 def get_ids(folder):
@@ -17,19 +19,29 @@ def get_ids(folder):
         if subject not in sessions:
             sessions[subject] = []
         sessions[subject].append(session)
-        print((len(path) - 1) * '---', os.path.basename(root))
-        for file in files:
-            print(len(path) * '---', file)
 
     return sessions
 
 def randomized_id(ids):
-    random.seed(23)
-    subject_count = len(ids)
-    for i in permutations(range(subject_count)):
-        list_copy = range(len(ids(i)))
-        ids[i] = list_copy
-    return list_copy
+    plain_text_to_anonymous = dict()
+    for subject in ids.keys():
+        random_subject = 'sub-'
+        for i in range(4):
+            rand_digit = chr(ord('0') + random.randint(0, 9))
+            random_subject = random_subject + rand_digit
+        for i in range(4):
+            rand_letter = chr(ord('A') + random.randint(0, 25))
+            random_subject = random_subject + rand_letter
+        plain_text_to_anonymous[subject] = random_subject
+        sessions = ids[subject]
+        first_time = datetime(int(sessions[0][4:8]), int(sessions[0][8:10]), int(sessions[0][10:12]))
+        encoded_sessions = [0]
+        for session in sessions[1:]:
+            later_time = datetime(int(session[4:8]), int(session[8:10]), int(session[10:12]))
+            difference = later_time - first_time
+            later_encoded_time = first_time + timedelta(days=difference.days)
+            print(later_encoded_time)
+
 
 
 if __name__ == '__main__':
