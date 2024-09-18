@@ -6,6 +6,10 @@ from pathlib import Path
 import shutil
 import pandas as pd
 import math
+import mne_bids
+import nibabel
+import pydeface
+import pydeface.utils
 
 
 def get_immediate_subdirectories(a_dir):
@@ -56,9 +60,14 @@ def rename_subject_folders(participants_mapping_df, bids_root_out):
         anonymized_participant_id = participants_mapping_df.loc[participants_mapping_df['participant_id'] == immediate_subdirectory, 'anonymized_participant_id'].iloc[0]
         os.rename(os.path.join(bids_root_out, immediate_subdirectory),
             os.path.join(bids_root_out, anonymized_participant_id))
+        
+
+def deface_images(bids_root_out):
+    pydeface.utils.deface_image('/users/9/reine097/data/loes-scoring-data/Loes_score_anonymized/sub-67/ses-20141027/mprageGd.nii.gz')
 
 
 if __name__ == '__main__':
+    deface_images('')
     from_directory = '/users/9/reine097/data/loes-scoring-data/Loes_score/'
     ids = get_ids(from_directory)
     to_directory = "/users/9/reine097/data/loes-scoring-data/Loes_score_anonymized"
