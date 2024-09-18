@@ -63,7 +63,7 @@ def rename_subject_folders(participants_mapping_df, bids_root_out):
         
 
 def deface_images(bids_root_out):
-    pydeface.utils.deface_image('/users/9/reine097/data/loes-scoring-data/Loes_score_anonymized/sub-67/ses-20141027/mprageGd.nii.gz')
+    pydeface.utils.deface_image()
 
 
 if __name__ == '__main__':
