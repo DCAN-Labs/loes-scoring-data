@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 import os
-import random
 import shutil
 from pathlib import Path
 import shutil
@@ -9,10 +8,15 @@ import pandas as pd
 import math
 
 
+def get_immediate_subdirectories(a_dir):
+    return [name for name in os.listdir(a_dir)
+            if os.path.isdir(os.path.join(a_dir, name))]
+
+
 def get_ids(folder):
     os.chdir(folder)
     sessions = dict()
-    for root, dirs, files in os.walk('.'):
+    for root, _, _ in os.walk('.'):
         path = root.split(os.sep)
         if len(path) < 3:
             continue
@@ -46,6 +50,14 @@ def anonymize_dataset(bids_root_in, bids_root_out):
     return participants_df
 
 
+def rename_subject_folders(participants_mapping_df, bids_root_out):
+    immediate_subdirectories = get_immediate_subdirectories(bids_root_out)
+    for immediate_subdirectory in immediate_subdirectories:
+        anonymized_participant_id = participants_mapping_df.loc[participants_mapping_df['participant_id'] == immediate_subdirectory, 'anonymized_participant_id'].iloc[0]
+        os.rename(os.path.join(bids_root_out, immediate_subdirectory),
+            os.path.join(bids_root_out, anonymized_participant_id))
+
+
 if __name__ == '__main__':
     from_directory = '/users/9/reine097/data/loes-scoring-data/Loes_score/'
     ids = get_ids(from_directory)
@@ -55,3 +67,4 @@ if __name__ == '__main__':
         shutil.rmtree(dirpath)
     shutil.copytree(from_directory, to_directory)
     encoding = anonymize_dataset(from_directory, to_directory)
+    rename_subject_folders(encoding, to_directory)
